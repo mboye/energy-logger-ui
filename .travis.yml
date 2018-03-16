@@ -1,0 +1,11 @@
+sudo: required
+language: python
+
+services:
+  - docker
+
+before_install:
+- git submodule update --init el4000
+
+script:
+- docker build -t energy-logger-ui:$(git describe) .
