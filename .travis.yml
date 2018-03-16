@@ -8,4 +8,6 @@ before_install:
 - git submodule update --init el4000
 
 script:
-- docker build -t energy-logger-ui:$(git describe) .
+- docker build -t $DOCKER_USERNAME/energy-logger-ui:$(git describe) .
+- docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+- docker push $DOCKER_USERNAME/energy-logger-ui:$(git describe)
