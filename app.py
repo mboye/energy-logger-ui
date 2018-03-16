@@ -9,16 +9,17 @@ import zipfile
 import tempfile
 from time import sleep
 import datetime
+from os import environ
+import os
 
 app = Flask(__name__)
-
-app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = '/tmp'
+APP_VERSION = environ.get('APP_VERSION', 'unknown version')
 
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('index.html', APP_VERSION=APP_VERSION)
+
 
 @app.route('/process', methods=['POST'])
 def upload_file():
@@ -26,16 +27,15 @@ def upload_file():
         return redirect('/')
 
     file = request.files['zipFile']
-    filename = secure_filename(file.filename)
-    save_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-    file.save(save_path)
+    tmp_filename = tempfile.NamedTemporaryFile(delete=False)
+    file.save(tmp_filename)
 
     def generate():
         # Header
         yield 'timestamp;power;kwh_sum\n'.encode('utf-8')
 
         joule_sum = 0
-        for data_point in process(save_path):
+        for data_point in process(tmp_filename):
             date_str = data_point[0].strftime('%Y-%m-%d %H:%M')
             power = data_point[1]
             kwh = joule_sum/(1000.0*3600)
@@ -81,7 +81,9 @@ def process(zip_filename):
             process_file(filename, printer, dt, data_only)
             data_points.extend(printer.read_data_points())
 
+        os.unlink(zip_filename.name)
         return sorted(data_points)
 
 if __name__ == '__main__':
+    print(f'Starting energy-logger-ui {APP_VERSION}')
     app.run(host='0.0.0.0')

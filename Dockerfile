@@ -16,5 +16,7 @@ ADD templates /app/templates
 ADD entrypoint.sh /entrypoint.sh
 
 EXPOSE 5000
+ARG APP_VERSION=dev
+ENV APP_VERSION ${APP_VERSION}
 
 ENTRYPOINT /entrypoint.sh
