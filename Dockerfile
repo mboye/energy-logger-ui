@@ -10,7 +10,7 @@ RUN rm -f /app/requirements.txt
 
 ADD el4000/*.py /app/el4000/
 
-ADD app.py /app
+ADD *.py /app/
 ADD templates /app/templates
 
 ADD entrypoint.sh /entrypoint.sh
