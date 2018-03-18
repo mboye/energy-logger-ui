@@ -1,6 +1,10 @@
 sudo: required
 language: python
 
+branches:
+  only:
+  - master
+
 services:
   - docker
 
