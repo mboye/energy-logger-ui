@@ -13,6 +13,10 @@ if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
 else
     # Release build
     build_image
-    docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
-    docker push "$DOCKER_USERNAME/energy-logger-ui:$VERSION"
+
+    if [ ! -z "$TRAVIS_TAG" ]; then
+        echo "Publishing image to Docker hub..."
+        docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+        docker push "$DOCKER_USERNAME/energy-logger-ui:$VERSION"
+    fi
 fi
